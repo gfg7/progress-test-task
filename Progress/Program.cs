@@ -1,5 +1,8 @@
+using Progress.Services.Database;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<DBContext>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
