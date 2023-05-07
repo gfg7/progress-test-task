@@ -33,7 +33,7 @@ namespace Progress.Services.Database
             }
         }
 
-        public async Task<IQueryable<T>> GetByFilter(Expression<Func<T, bool>>? filter = null, int take = 10, int page = 0)
+        public async Task<IQueryable<T>> GetByFilter(Expression<Func<T, bool>>? filter = null, int take = 0, int page = 0)
         {
             return await GetAllByFilter(take, page, filter);
         }
@@ -50,12 +50,17 @@ namespace Progress.Services.Database
                 set = _context.Set<T>();
             }
 
-            var result = set.Where(filter).Skip(take * page).Take(take);
+            var result = set.Where(filter);
+
+            if (take != 0)
+            {
+                result = result.Skip(take * page).Take(take);
+            }
 
             return Task.FromResult(result);
         }
 
-        public async Task<IQueryable<T>> GetByFilter(Expression<Func<T, bool>>? filter = null, int take = 10, int page = 0, params Expression<Func<T, object>>[] includes)
+        public async Task<IQueryable<T>> GetByFilter(Expression<Func<T, bool>>? filter = null, int take = 0, int page = 0, params Expression<Func<T, object>>[] includes)
         {
             var set = IncludeEntities(_context.Set<T>(), includes);
 
