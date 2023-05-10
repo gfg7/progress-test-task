@@ -7,9 +7,9 @@ namespace Progress.Services.Database
 {
     public class Repository<T, K> : IRepository<T, K> where T : class, IEntity<K> where K : notnull
     {
-        private readonly DBContext _context;
+        private readonly DbContext _context;
         private IDbContextTransaction _transaction;
-        public Repository(DBContext context)
+        public Repository(DbContext context)
         {
             _context = context;
         }
@@ -22,7 +22,6 @@ namespace Progress.Services.Database
                 var result = await _context.Set<T>().AddAsync(obj);
                 await _context.SaveChangesAsync();
                 await _transaction.CommitAsync();
-                await _transaction.DisposeAsync();
 
                 return result.Entity;
             }
@@ -30,6 +29,10 @@ namespace Progress.Services.Database
             {
                 await _transaction.RollbackAsync();
                 throw ex;
+            }
+            finally
+            {
+                await _transaction.DisposeAsync();
             }
         }
 
@@ -76,7 +79,7 @@ namespace Progress.Services.Database
         {
             var set = IncludeEntities(_context.Set<T>(), includes);
 
-            return await set.FirstOrDefaultAsync(x => x.GetKey().Equals(key));
+            return set.AsEnumerable().Where((x => x.IdEquals(key))).FirstOrDefault();
         }
 
         private IQueryable<T> IncludeEntities(IQueryable<T> set, params Expression<Func<T, object>>[] includes)

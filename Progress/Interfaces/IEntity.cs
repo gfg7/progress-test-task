@@ -4,5 +4,6 @@ namespace Progress.Interfaces
     {
         T GetKey();
         T SetKey();
+        bool IdEquals(T key);
     }
 }
