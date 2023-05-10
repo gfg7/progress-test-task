@@ -1,0 +1,55 @@
+@model Patient
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/patients">Журнал пациентов</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Профиль пациента</li>
+  </ol>
+</nav>
+
+<div>
+<div class="card" >
+  <div class="card-body">
+    <h5 class="card-title">@Model.Surname @Model.Name @Model.Patronymic </h5>
+    <div class="input-group mb-3">
+  <span class="input-group-text" id="date">Дата рождения</span>
+  <input type="text" class="form-control" readonly="readonly" value="@Model.DateOfBirth.ToShortDateString()" aria-describedby="date">
+</div>
+    <div class="input-group mb-3">
+  <span class="input-group-text" id="phone">Номер телефона</span>
+  <input type="text" class="form-control" readonly="readonly" value="@Model.PhoneNumber" aria-describedby="phone">
+</div>
+    <a class="btn btn-primary" href="/visits/@Model.Id/new">Назначить запись</a>
+    <a class="btn btn-primary" href="/patients/@Model.Id/export" class="card-link">Экспортировать</a>
+  </div>
+  <nav aria-label="Page navigation example">
+</nav>
+
+  <ul class="list-group list-group-flush" id="visits"></ul>
+</div>
+@section Scripts {
+  <script>
+    const visitRender = ({time, diagnosis}) => `
+      <li class="list-group-item d-flex flex-column">
+        <strong>${time}</strong>
+        <div class="text-end">${diagnosis}</div>
+      </li>`;
+
+      $(document).ready(function () {
+        GetVisits();
+      });
+
+
+    function GetVisits() {
+      $.get(`/visits/@Model.Id`, function (result) {
+          $(`#visits`).empty();
+          $.each(result, function(key, value)
+          {
+            var t = new Date(value.time);
+            time = `${t.getDate()}.${t.getUTCMonth()}.${t.getFullYear()} ${t.getUTCHours()}:${t.getUTCMinutes()}`;
+            $(`#visits`).append([{time : time, diagnosis: `${value.diagnosis} ${value.reason.name}`}].map(visitRender).join(''));
+          });
+      });
+    }
+  </script>
+}

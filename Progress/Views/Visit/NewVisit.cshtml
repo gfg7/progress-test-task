@@ -1,0 +1,56 @@
+﻿@model Visit
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/patients">Журнал пациентов</a></li>
+    <li class="breadcrumb-item"><a href="/patients/@Model.PatientId">Профиль пациента</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Новое посещение</li>
+  </ol>
+</nav>
+<div class="card" >
+  <div class="card-body">
+    <h5 class="card-title">Посещение</h5>
+    <form asp-controller="visits" asp-action="new">
+        <input type="hidden" id="patient-input" name="PatientId" value="@Model.PatientId">
+        <input type="hidden" id="diagnosis-input" aria-label="diagnosis-label" value="@Model.Diagnosis" required aria-required="true" name="Diagnosis">
+        <select id="diagnosis" placeholder="Диагноз"></select> 
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="visit-time">Время записи</span>
+            <input type="datetime-local" class="form-control" aria-invalid="true" aria-label="visit-time" aria-required="true" required name="Time" value="@Model.Time">
+        </div>
+    <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+</div>
+
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+    <script>
+    $(document).ready(function () {
+
+        $('#diagnosis').selectize({
+            sortField: 'text',
+            onItemAdd: function(value, $item) {
+                $("#diagnosis-input").val(value);
+            }
+        });
+
+        $('#diagnosis').text("@Model.Diagnosis");
+        $('#diagnosis-input').val("@Model.Diagnosis");
+
+        GetDict('');
+    });
+
+    function GetDict(url) {
+        $.get(`/mbk/10/search?search=${url}`, function (result) {
+                $.each(result, function(key, value)
+                {
+                    $(`#diagnosis`)[0].selectize.addOption({value : value.id, text:`${value.id} ${value.name}`});
+                });
+                $(`#diagnosis`)[0].selectize.refreshOptions();
+            });
+    }
+
+</script>
+}

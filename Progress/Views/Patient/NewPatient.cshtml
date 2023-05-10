@@ -1,0 +1,41 @@
+@model Patient
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/patients">Журнал пациентов</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Новый пациент</li>
+  </ol>
+</nav>
+<div class="card" >
+  <div class="card-body">
+    <h5 class="card-title">Новый пациент</h5>
+    <form asp-controller="patients" asp-action="new">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="Surname">Фамилия</span>
+            <input type="text" class="form-control" aria-label="Surname" value="@Model?.Surname" aria-required="true" required
+                name="Surname">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="Name">Имя</span>
+            <input type="text" class="form-control" aria-label="Name" value="@Model?.Name" aria-required="true" required
+                name="Name">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="Patronymic">Отчество</span>
+            <input type="text" class="form-control" aria-label="Patronymic" value="@Model?.Patronymic"
+                name="Patronymic">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="DateOfBirth">Дата  рождения</span>
+            <input type="date" class="form-control" aria-required="true" required aria-invalid="true" aria-label="DateOfBirth" value="@Model?.DateOfBirth"
+                name="DateOfBirth">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="PhoneNumber">Номер телефона</span>
+            <input type="tel" class="form-control" aria-invalid="true" aria-label="PhoneNumber" value="@Model?.PhoneNumber"
+                name="PhoneNumber">
+        </div>
+        @Html.ValidationSummary(false, "Ошибки заполнения формы:")
+    <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+</div>
+</div>
