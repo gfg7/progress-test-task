@@ -7,9 +7,18 @@ namespace Progress.Models
     {
         [KeyAttribute]
         [StringLength(36)]
-        public string Id { get; private set; }
+        public string Id { get; set; }
+        public BaseStringKeyEntity()
+        {
+            SetKey();
+        }
 
         public string GetKey() => Id;
+
+        public bool IdEquals(string key)
+        {
+            return Id==key;
+        }
 
         public string SetKey()
         {
